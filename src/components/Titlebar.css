@@ -1,0 +1,53 @@
+.custom-drop-down-btn button {
+  height: 0.1em;
+  width: 1.7em;
+  border-radius: 1.7em;
+  border-color: #e9ecef !important;
+  color: black !important;
+  background: #e9ecef !important;
+  box-shadow: none;
+  font-size: 1.5em;
+  padding-bottom: 1.5em;
+}
+
+.custom-drop-down-btn button:hover {
+  background: lightgray !important;
+}
+
+.custom-drop-down-btn button:focus {
+  color: dodgerblue !important;
+  background-color: lightblue !important;
+  border-color: lightblue !important;
+}
+
+.profile {
+  width: 100px;
+  height: 46px;
+  background: #e9ecef;
+  border-radius: 23px;
+  caret-color: transparent;
+}
+
+.profile:hover {
+  background: lightgray;
+}
+
+.nav-container {
+  max-width: 100em;
+  margin: auto;
+}
+
+.titlebar {
+  position: fixed;
+  width: 100vw;
+  z-index: 1;
+  top: 0;
+  left: 0;
+}
+
+@media (max-width: 640px) {
+  .spaceing,
+  .first {
+    display: none;
+  }
+}

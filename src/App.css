@@ -1,0 +1,21 @@
+.login {
+  width: 390px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  box-shadow: 0px 9px 18px 2px lightgrey;
+  margin: auto;
+}
+
+.bg-200 {
+  background-color: #e9ecef;
+}
+
+.main-container {
+  max-width: 100em;
+  margin: auto;
+}
+
+.title-footer {
+  font-size: small;
+  font-weight: lighter;
+}

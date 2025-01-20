@@ -1,0 +1,63 @@
+.scrolling-container {
+  width: 102.5%;
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+.textarea {
+  outline: none;
+  border: none;
+  resize: none;
+  overflow-y: hidden;
+}
+
+.img-container {
+  width: 100%;
+  border: 2px solid lightgray;
+  border-radius: 10px;
+  padding: 10px;
+  position: relative;
+}
+
+.img-to-post {
+  border-radius: 10px;
+}
+
+.close-btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.add-to-post {
+  border: 2px solid lightgray;
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 14px;
+}
+
+.comment-btn {
+  background-color: #e9ecef;
+}
+
+.video-container {
+  width: 100%;
+  border: 2px solid lightgray;
+  border-radius: 10px;
+  padding: 10px;
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9, for an aspect ratio of 1:1 change to this value to 100% */
+}
+
+.react-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
