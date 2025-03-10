@@ -1,9 +1,3 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/storage";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
-import "firebase/compat/app-check";
-import firebaseConfig from "../firebaseConfig";
 import store from "../app/store";
 import {
   signIn,
@@ -19,9 +13,9 @@ import { incomingMessagesUpdated } from "../features/incomingMessages/incomingMe
 import { outgoingMessagesUpdated } from "../features/outgoingMessages/outgoingMessagesSlice";
 
 // URL of my website.
-const FAKEBOOK_URL = { url: "https://alexerdei73.github.io/fakebook/" };
+const FAKEBOOK_URL = "https://alexerdei73.github.io/fakebook-ainoro/";
 
-firebase.initializeApp(firebaseConfig);
+/*firebase.initializeApp(firebaseConfig);
 
 const appCheck = firebase.appCheck();
 // Pass your reCAPTCHA v3 site key (public key) to activate(). Make sure this
@@ -34,7 +28,144 @@ appCheck.activate(
   true
 );
 
-const storage = firebase.storage();
+const storage = firebase.storage();*/
+
+// Code from the image-storage project to handle the authentication and storage
+const BASE_URL = "https://alexerdei-team.us.ainiro.io/magic/modules/fakebook/";
+
+async function getJSON(response) {
+  const json = await response.json();
+  if (response.status > 299) throw Error(json.message);
+  return json;
+}
+
+async function getBlob(response) {
+  if (response.status > 299) {
+    const json = await response.json();
+    throw Error(json.message);
+  }
+  return await response.blob();
+}
+
+async function register(user) {
+  try {
+    const response = await fetch(`${BASE_URL}register`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    return await getJSON(response);
+  } catch (error) {
+    return { error };
+  }
+}
+
+async function login(user) {
+  const { email, password } = user;
+  try {
+    const response = await fetch(
+      `${BASE_URL}login?email=${email}&password=${password}`,
+      {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return await getJSON(response);
+  } catch (error) {
+    return { error };
+  }
+}
+
+/*async function upload(file, token) {
+  const formData = new FormData();
+  formData.append("file", file);
+  try {
+    const response = await fetch(`${BASE_URL}image`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        Authorization: token,
+      },
+      body: formData,
+    });
+    return await getJSON(response);
+  } catch (error) {
+    return { error };
+  }
+}*/
+
+async function getStorage(token) {
+  try {
+    const response = await fetch(`${BASE_URL}storage`, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        Authorization: token,
+      },
+    });
+    return await getJSON(response);
+  } catch (error) {
+    return { error };
+  }
+}
+
+async function downloadFile(folder, filename, token) {
+  try {
+    const response = await fetch(
+      `${BASE_URL}image?folder=${folder}&filename=${filename}`,
+      {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return await getBlob(response);
+  } catch (error) {
+    return { error };
+  }
+}
+
+async function deleteFile(folder, filename, token) {
+  try {
+    const response = await fetch(
+      `${BASE_URL}image?folder=${folder}&filename=${filename}`,
+      {
+        method: "DELETE",
+        mode: "cors",
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return await getJSON(response);
+  } catch (error) {
+    return { error };
+  }
+}
+// end of back-end code from the image-storage project
+
+async function getUsers(token) {
+  try {
+    const response = await fetch(`${BASE_URL}users`, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        Authorization: token,
+      },
+    });
+    return await getJSON(response);
+  } catch (error) {
+    return { error };
+  }
+}
 
 export async function getImageURL(imagePath) {
   const imageRef = storage.ref(imagePath);
@@ -42,25 +173,42 @@ export async function getImageURL(imagePath) {
   return url;
 }
 
-const auth = firebase.auth();
+//const auth = firebase.auth();
 
-export function subscribeAuth() {
-  return auth.onAuthStateChanged((user) => {
-    if (user) {
-      const id = user.uid;
-      const isEmailVerified = user.emailVerified;
-      const displayName = user.displayName;
+export async function subscribeAuth() {
+  let user = localStorage.getItem("user");
+  if (user) {
+    user = JSON.parse(user);
+    console.log(user);
+    const id = user.user_id;
+    const isEmailVerified = true;
+    const token = user.token;
+    try {
+      const users = await getUsers(token);
+      console.log(users);
+      users.forEach((user) => {
+        user.userID = user.user_id;
+        delete user.user_id;
+      });
+      store.dispatch(usersUpdated(users));
+      const userData = users.filter((user) => user.userID === id);
+      const { firstname, lastname } = userData;
+      const displayName = `${firstname} ${lastname}`;
       store.dispatch(signIn({ id, displayName, isEmailVerified }));
-    } else {
+    } catch (error) {
+      console.log(error);
+      localStorage.removeItem("user");
       store.dispatch(signOut());
     }
-    store.dispatch(loadingFinished());
-  });
+  } else {
+    store.dispatch(signOut());
+  }
+  store.dispatch(loadingFinished());
 }
 
-const firestore = firebase.firestore();
+/*const firestore = firebase.firestore();
 
-const usersCollection = firestore.collection("users");
+const usersCollection = firestore.collection("users");*/
 
 //The following global variables get values, when the UserAccount component renders and runs
 //subscribeCurrentUser. After that we use them globally in the following functions.
@@ -68,6 +216,7 @@ let userID;
 let userDocRef;
 
 export function subscribeCurrentUser() {
+  return;
   userID = store.getState().user.id; //These are the
   userDocRef = usersCollection.doc(userID); //global values
   return userDocRef.onSnapshot((doc) => {
@@ -84,6 +233,7 @@ export function currentUserOffline() {
 }
 
 export function subscribeUsers() {
+  return;
   return usersCollection.onSnapshot((snapshot) => {
     const users = [];
     snapshot.forEach((user) => {
@@ -103,6 +253,7 @@ export async function signUserOut() {
 }
 
 export function subscribePosts() {
+  return;
   const postsCollection = firestore.collection("posts");
   return postsCollection.orderBy("timestamp", "desc").onSnapshot((snapshot) => {
     const posts = [];
@@ -120,6 +271,7 @@ export function subscribePosts() {
 }
 
 export function subscribeMessages(typeOfMessages) {
+  return;
   let typeOfUser;
   let actionCreator;
   if (typeOfMessages === "incoming") {
@@ -193,10 +345,10 @@ export async function signInUser(user) {
     "Please verify your email before to continue";
   const NO_ERROR = "";
   try {
-    const result = await auth.signInWithEmailAndPassword(
-      user.email,
-      user.password
-    );
+    const response = await login(user);
+    response.token = `Bearer ${response.token}`;
+    localStorage.setItem("user", JSON.stringify(response));
+  } catch (error) {
     // email has been verified?
     if (!result.user.emailVerified) {
       auth.signOut();
@@ -204,7 +356,6 @@ export async function signInUser(user) {
     } else {
       store.dispatch(errorOccured(NO_ERROR));
     }
-  } catch (error) {
     // Update the error
     store.dispatch(errorOccured(error.message));
   } finally {
@@ -217,6 +368,7 @@ export function sendPasswordReminder(email) {
 }
 
 export async function upload(post) {
+  return;
   const refPosts = firestore.collection("posts");
   const docRef = await refPosts.add({
     ...post,
@@ -257,7 +409,7 @@ export function updateProfile(profile) {
   return userDocRef.update(profile);
 }
 
-const refMessages = firestore.collection("messages");
+//const refMessages = firestore.collection("messages");
 
 export function uploadMessage(msg) {
   return refMessages.add({
