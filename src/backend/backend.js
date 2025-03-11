@@ -33,6 +33,27 @@ const storage = firebase.storage();*/
 // Code from the image-storage project to handle the authentication and storage
 const BASE_URL = "https://alexerdei-team.us.ainiro.io/magic/modules/fakebook/";
 
+// SignalR Websockets code
+import * as signalR from "@microsoft/signalr";
+
+let builder = new signalR.HubConnectionBuilder();
+
+let connection = builder
+  .withUrl("https://alexerdei-team.us.ainiro.io/sockets", {
+    accessTokenFactory: () => JSON.parse(localStorage.getItem("user")).token,
+    skipNegotiation: true,
+    transport: signalR.HttpTransportType.WebSockets,
+  })
+  .build();
+
+connection.on("fakebook.users.put", (args) => {
+  console.log(JSON.parse(args));
+});
+
+connection.start().catch((err) => console.error(err.toString()));
+
+// End of websockets code
+
 async function getJSON(response) {
   const json = await response.json();
   if (response.status > 299) throw Error(json.message);
@@ -222,11 +243,11 @@ export function subscribeCurrentUser() {
 }
 
 export function currentUserOnline() {
-  userDocRef.update({ isOnline: true });
+  return; //userDocRef.update({ isOnline: true });
 }
 
 export function currentUserOffline() {
-  return userDocRef.update({ isOnline: false });
+  return; //userDocRef.update({ isOnline: false });
 }
 
 export function subscribeUsers() {
@@ -351,8 +372,9 @@ export async function signInUser(user) {
   } catch (error) {
     // Email is not verified
     if (error.message.indexOf("email") !== -1) {
-      auth.signOut();
       store.dispatch(errorOccured(EMAIL_VERIFICATION_ERROR));
+      localStorage.removeItem("user");
+      subscribeAuth();
     } else {
       // Update the error
       store.dispatch(errorOccured(error.message));
