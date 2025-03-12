@@ -44,9 +44,11 @@ function App() {
 	const firstName = name.join(" ");
 
 	const profileLink = `/fakebook/${lastName}.${firstName}`;
-	
-  
-  useEffect(() => dispatch(profileLinkSet(profileLink)), [profileLink, dispatch]);
+
+	useEffect(
+		() => dispatch(profileLinkSet(profileLink)),
+		[profileLink, dispatch]
+	);
 
 	//handling the password reminder button
 	const [isModalSignup, setModalSignup] = useState(true);
@@ -75,8 +77,7 @@ function App() {
 					<Col lg={5} className="bg-200 d-flex justify-content-center">
 						<div className="login p-3 bg-light">
 							<Login
-								onClickForgottenPswd={handleClickPasswordReminderBtn}
-								></Login>
+								onClickForgottenPswd={handleClickPasswordReminderBtn}></Login>
 
 							<hr />
 

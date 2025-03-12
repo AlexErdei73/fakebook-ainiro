@@ -23,16 +23,21 @@ export const currentUserSlice = createSlice({
 				isOnline,
 				index,
 			} = action.payload;
-			state.firstname = firstname;
-			state.lastname = lastname;
-			state.profilePictureURL = profilePictureURL;
-			state.backgroundPictureURL = backgroundPictureURL;
-			state.isOnline = isOnline;
-			if (index) state.index = index;
-			state.photos = [];
-			state.posts = [];
-			photos.forEach((photo) => state.photos.push(photo));
-			posts.forEach((post) => state.posts.push(post));
+			state.firstname = firstname || state.firstname;
+			state.lastname = lastname || state.lastname;
+			state.profilePictureURL = profilePictureURL || state.profilePictureURL;
+			state.backgroundPictureURL =
+				backgroundPictureURL || state.backgroundPictureURL;
+			state.isOnline = isOnline || state.isOnline;
+			if (index) state.index = index || state.index;
+			if (photos) {
+				state.photos = [];
+				photos.forEach((photo) => state.photos.push(photo));
+			}
+			if (posts) {
+				state.posts = [];
+				posts.forEach((post) => state.posts.push(post));
+			}
 		},
 	},
 });
