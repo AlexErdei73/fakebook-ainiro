@@ -42,6 +42,7 @@ const StorageImage = (props) => {
       return cleanup;
     }
 
+    /*
     //We look for the url in images slice first
     let imageIndex = images
       .map((image) => image.storagePath)
@@ -94,6 +95,7 @@ const StorageImage = (props) => {
     //we don't do this React gives us error messages about state update on our
     //unmounted component
     return cleanup;
+    */
   }, [images, storagePath, url, dispatch]);
 
   return <img src={url} alt={alt} {...rest} />;
