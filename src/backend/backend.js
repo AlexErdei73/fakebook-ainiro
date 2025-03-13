@@ -42,7 +42,7 @@ let builder = new signalR.HubConnectionBuilder();
 
 let connection = builder
 	.withUrl(SOCKETS_URL, {
-		accessTokenFactory: () => JSON.parse(localStorage.getItem("user")).token,
+		//accessTokenFactory: () => JSON.parse(localStorage.getItem("user")).token,
 		skipNegotiation: true,
 		transport: signalR.HttpTransportType.WebSockets,
 	})
@@ -218,14 +218,13 @@ export async function subscribeAuth() {
 		const token = user.token;
 		let users = store.getState().users;
 		try {
-			if (users.length === 0) {
+			if (!users || users.length === 0) {
 				users = await getUsers(token);
-				users.forEach((user) => {
-					user.userID = user.user_id;
-					delete user.user_id;
-				});
 				store.dispatch(usersUpdated(users));
+				//users = store.getState().users;
+				//console.log(users);
 			}
+			console.log(users);
 			const userData = users.filter((user) => user.userID === id);
 			const { firstname, lastname } = userData;
 			const displayName = `${firstname} ${lastname}`;
@@ -273,21 +272,21 @@ export async function currentUserOffline() {
 }
 
 export function subscribeUsers() {
-	return;
-	return usersCollection.onSnapshot((snapshot) => {
-		const users = [];
-		snapshot.forEach((user) => {
-			const userData = user.data();
-			userData.userID = user.id;
-			users.push(userData);
-		});
-		store.dispatch(usersUpdated(users));
+	connection.on("fakebook.users.put", (args) => {
+		const data = JSON.parse(args);
+		console.log(data);
+		store.dispatch(usersUpdated([data]));
+	});
+	connection.on("fakebook.users.push", (args) => {
+		const data = JSON.parse(args);
+		console.log(data);
+		store.dispatch(usersUpdated([data]));
 	});
 }
 
 export async function signUserOut() {
 	store.dispatch(loadingStarted());
-	//await currentUserOffline();
+	await currentUserOffline();
 	//await auth.signOut();
 	localStorage.removeItem("user");
 	store.dispatch(loadingFinished());
