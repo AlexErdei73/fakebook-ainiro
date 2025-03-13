@@ -45,10 +45,9 @@ function App() {
 
 	const profileLink = `/fakebook/${lastName}.${firstName}`;
 
-	useEffect(
-		() => dispatch(profileLinkSet(profileLink)),
-		[profileLink, dispatch]
-	);
+	useEffect(() => {
+		if (lastName) dispatch(profileLinkSet(profileLink));
+	}, [profileLink, dispatch]);
 
 	//handling the password reminder button
 	const [isModalSignup, setModalSignup] = useState(true);
