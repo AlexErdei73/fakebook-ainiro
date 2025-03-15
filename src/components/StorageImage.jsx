@@ -24,22 +24,29 @@ const StorageImage = (props) => {
 
   function changeStoragePath(storagePath) {
     const words = storagePath.split(".");
-    words[words.length - 2] += "_400x400";
+    //words[words.length - 2] += "_400x400";
+    words[words.length - 1] = "webp";
     return words.join(".");
   }
 
   useEffect(() => {
-    let shouldUpdate = true;
-    const cleanup = () => (shouldUpdate = false);
+    //let shouldUpdate = true;
+    //const cleanup = () => (shouldUpdate = false);
 
     //We filter out placeholder pictures
     if (storagePath === PLACEHOLDER_AVATAR_STORAGE_PATH) {
       setUrl(fakebookAvatar);
-      return cleanup;
-    }
-    if (storagePath === PLACEHOLDER_BACKGROUND_STORAGE_PATH) {
+      //return cleanup;
+    } else if (storagePath === PLACEHOLDER_BACKGROUND_STORAGE_PATH) {
       setUrl(backgroundServer);
-      return cleanup;
+      //return cleanup;
+    } else {
+      const storagePathParts = changeStoragePath(storagePath).split("/");
+      const folder = `fakebook/${storagePathParts[0]}`;
+      const filename = storagePathParts[1];
+      setUrl(
+        `https://alexerdei-team.us.ainiro.io/magic/modules/image-storage/image?folder=${folder}&filename=${filename}`
+      );
     }
 
     /*
@@ -96,7 +103,7 @@ const StorageImage = (props) => {
     //unmounted component
     return cleanup;
     */
-  }, [images, storagePath, url, dispatch]);
+  }, []);
 
   return <img src={url} alt={alt} {...rest} />;
 };

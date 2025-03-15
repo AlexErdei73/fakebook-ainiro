@@ -97,7 +97,7 @@ async function login(user) {
   return await getJSON(response);
 }
 
-/*async function upload(file, token) {
+async function uploadFile(file, token) {
   const formData = new FormData();
   formData.append("file", file);
   try {
@@ -113,7 +113,7 @@ async function login(user) {
   } catch (error) {
     return { error };
   }
-}*/
+}
 
 async function getStorage(token) {
   try {
@@ -438,15 +438,15 @@ export function updatePost(post, postID) {
   postRef.update(restPost);
 }
 
-export function addFileToStorage(file) {
-  const ref = storage.ref(userID).child(file.name);
-  return ref.put(file);
+export async function addFileToStorage(file) {
+  await uploadFile(file, token);
+  return file;
 }
 
 export function updateProfile(profile) {
-  console.log(userDocRef);
+  //console.log(userDocRef);
   console.log(profile);
-  return userDocRef.update(profile);
+  return; //userDocRef.update(profile);
 }
 
 //const refMessages = firestore.collection("messages");
