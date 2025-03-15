@@ -1,55 +1,56 @@
 import React, { useState } from "react";
-import { getImageURL } from "../backend/backend";
+//import { getImageURL } from "../backend/backend";
 import { useSelector, useDispatch } from "react-redux";
 import placeholderImage from "../images/placeholder-image.jpg";
 import fakebookAvatar from "../images/fakebook-avatar.jpeg";
 import backgroundServer from "../images/background-server.jpg";
-import { imageAdded, imageUrlFound } from "../features/images/imagesSlice";
+//import { imageAdded, imageUrlFound } from "../features/images/imagesSlice";
 import { useEffect } from "react";
 
 const StorageImage = (props) => {
-  const { storagePath, alt, ...rest } = props;
+	const { storagePath, alt, ...rest } = props;
 
-  const PLACEHOLDER_AVATAR_STORAGE_PATH = "fakebook-avatar.jpeg";
-  const PLACEHOLDER_BACKGROUND_STORAGE_PATH = "background-server.jpg";
+	const PLACEHOLDER_AVATAR_STORAGE_PATH = "fakebook-avatar.jpeg";
+	const PLACEHOLDER_BACKGROUND_STORAGE_PATH = "background-server.jpg";
 
-  //We use the images slice as a buffer. Fetching the actual url of the image
-  //in the storage takes relatively long time and uses Firebase. We render the same
-  //image in the app several times. Our goal to fetch the url only once for each image
-  //to save resources.
-  const images = useSelector((state) => state.images);
-  const dispatch = useDispatch();
+	//We use the images slice as a buffer. Fetching the actual url of the image
+	//in the storage takes relatively long time and uses Firebase. We render the same
+	//image in the app several times. Our goal to fetch the url only once for each image
+	//to save resources.
+	//const images = useSelector((state) => state.images);
+	//const dispatch = useDispatch();
 
-  const [url, setUrl] = useState(placeholderImage);
+	const [url, setUrl] = useState(placeholderImage);
 
-  function changeStoragePath(storagePath) {
-    const words = storagePath.split(".");
-    //words[words.length - 2] += "_400x400";
-    words[words.length - 1] = "webp";
-    return words.join(".");
-  }
+	function changeStoragePath(storagePath) {
+		const words = storagePath.split(".");
+		//words[words.length - 2] += "_400x400";
+		words[words.length - 1] = "webp";
+		return words.join(".");
+	}
 
-  useEffect(() => {
-    //let shouldUpdate = true;
-    //const cleanup = () => (shouldUpdate = false);
+	useEffect(() => {
+		//let shouldUpdate = true;
+		//const cleanup = () => (shouldUpdate = false);
 
-    //We filter out placeholder pictures
-    if (storagePath === PLACEHOLDER_AVATAR_STORAGE_PATH) {
-      setUrl(fakebookAvatar);
-      //return cleanup;
-    } else if (storagePath === PLACEHOLDER_BACKGROUND_STORAGE_PATH) {
-      setUrl(backgroundServer);
-      //return cleanup;
-    } else {
-      const storagePathParts = changeStoragePath(storagePath).split("/");
-      const folder = `fakebook/${storagePathParts[0]}`;
-      const filename = storagePathParts[1];
-      setUrl(
-        `https://alexerdei-team.us.ainiro.io/magic/modules/image-storage/image?folder=${folder}&filename=${filename}`
-      );
-    }
+		//We filter out placeholder pictures
+		if (storagePath === PLACEHOLDER_AVATAR_STORAGE_PATH) {
+			setUrl(fakebookAvatar);
+			//return cleanup;
+		} else if (storagePath === PLACEHOLDER_BACKGROUND_STORAGE_PATH) {
+			setUrl(backgroundServer);
+			//return cleanup;
+		} else {
+			const storagePathParts = changeStoragePath(storagePath).split("/");
+			const len = storagePathParts.length;
+			const folder = `fakebook/${storagePathParts[len - 2]}`;
+			const filename = storagePathParts[len - 1];
+			setUrl(
+				`https://alexerdei-team.us.ainiro.io/magic/modules/fakebook/image?folder=${folder}&filename=${filename}`
+			);
+		}
 
-    /*
+		/*
     //We look for the url in images slice first
     let imageIndex = images
       .map((image) => image.storagePath)
@@ -103,9 +104,9 @@ const StorageImage = (props) => {
     //unmounted component
     return cleanup;
     */
-  }, []);
+	}, []);
 
-  return <img src={url} alt={alt} {...rest} />;
+	return <img src={url} alt={alt} {...rest} />;
 };
 
 export default StorageImage;
