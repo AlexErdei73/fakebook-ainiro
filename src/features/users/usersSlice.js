@@ -24,6 +24,10 @@ export const usersSlice = createSlice({
 						state[i].isEmailVerified = Boolean(user.isEmailVerified);
 					if (user.posts) state[i].posts = JSON.parse(user.posts);
 					if (user.photos) state[i].photos = JSON.parse(user.photos);
+					if (user.profilePictureURL)
+						state[i].profilePictureURL = user.profilePictureURL;
+					if (user.backgroundPictureURL)
+						state[i].backgroundPictureURL = user.backgroundPictureURL;
 					delete state[i].password_hash;
 					delete state[i].user_id;
 					state[i].userID = user.user_id;
