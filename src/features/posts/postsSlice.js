@@ -19,7 +19,7 @@ export const postsSlice = createSlice({
 					post.likes = JSON.parse(post.likes);
 					post.comments = JSON.parse(post.comments);
 					post.timestamp = new Date(post.timestamp).toLocaleString();
-					state.push(post);
+					state.unshift(post);
 				}
 			});
 			//return updatedState;

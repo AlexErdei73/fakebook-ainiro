@@ -205,6 +205,23 @@ async function updateUser(id, token, body) {
 	}
 }
 
+async function postPosts(token, body) {
+	try {
+		const response = await fetch(`${BASE_URL}posts`, {
+			method: "POST",
+			mode: "cors",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: token,
+			},
+			body: JSON.stringify(body),
+		});
+		return await getJSON(response);
+	} catch (error) {
+		return { error };
+	}
+}
+
 /*export async function getImageURL(imagePath) {
 	const imageRef = storage.ref(imagePath);
 	const url = await imageRef.getDownloadURL();
@@ -409,16 +426,29 @@ export function sendPasswordReminder(email) {
 	return auth.sendPasswordResetEmail(email);
 }
 
+function getPostID() {
+	const posts = store.getState().posts;
+	let isDuplicated = true;
+	let id;
+	while (isDuplicated) {
+		id = Math.random().toString(36).slice(2, 12);
+		isDuplicated = posts.map((post) => post.postID).indexOf(id) !== -1;
+	}
+	return id;
+}
+
 export async function upload(post) {
-	return;
-	const refPosts = firestore.collection("posts");
-	const docRef = await refPosts.add({
-		...post,
-		timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-	});
-	const postID = docRef.id;
+	post.post_id = getPostID();
+	post.isYoutube = Number(post.isYoutube);
+	post.isPhoto = Number(post.isPhoto);
+	post.likes = JSON.stringify(post.likes);
+	post.comments = JSON.stringify(post.comments) || "[]";
+	post.user_id = post.userID;
+	delete post.userID;
+	console.log("post: ", post);
+	await postPosts(token, post);
+	const postID = post.post_id;
 	updateUserPosts(postID);
-	return docRef;
 }
 
 function updateUserPosts(postID) {
@@ -427,7 +457,7 @@ function updateUserPosts(postID) {
 	if (user.posts) newPosts = [...user.posts];
 	else newPosts = [];
 	newPosts.unshift(postID);
-	userDocRef.update({
+	updateUser(userID, token, {
 		posts: newPosts,
 	});
 }
