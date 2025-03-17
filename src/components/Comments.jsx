@@ -78,11 +78,11 @@ const Comments = (props) => {
       <hr />
       {post.comments &&
         post.comments.map((comment, index) => (
-          <DisplayComment key={index} comment={comment} className="mb-2" />
+          <DisplayComment key={index} comment={comment} className='mb-2' />
         ))}
       <Row>
         <Col xs={1}>
-          <CircularImage size="36" url={user.profilePictureURL} />
+          <CircularImage size='36' url={user.profilePictureURL} />
         </Col>
         <Col xs={11}>
           <Row
@@ -90,52 +90,55 @@ const Comments = (props) => {
               background: "#e9ecef",
               borderRadius: "18px",
               marginLeft: "5px",
-            }}>
-            <Col xs={9} className="align-self-center">
+            }}
+          >
+            <Col xs={9} className='align-self-center'>
               <StyledTextarea
                 onChange={handleChange}
                 onKeyPress={(e) => handleKeyPress(e, saveComment)}
                 welcomeText={WELCOME_TEXT}
                 value={comment.text}
-                className="w-100 mt-2"
+                className='w-100 mt-2'
               />
             </Col>
             <Col xs={3}>
-              <Row className="justify-content-end align-items-baseline">
+              <Row className='justify-content-end align-items-baseline'>
                 <Button
-                  variant="light"
-                  size="sm"
-                  className="comment-btn"
+                  variant='light'
+                  size='sm'
+                  className='comment-btn'
                   onClick={() => setShow(true)}
-                  disabled={comment.isPhoto}>
+                  disabled={comment.isPhoto}
+                >
                   <MdPhotoCamera
-                    size="18px"
-                    className="text-muted"
-                    aria-label="photo"
+                    size='18px'
+                    className='text-muted'
+                    aria-label='photo'
                   />
                 </Button>
                 <Button
-                  variant="light"
-                  size="sm"
-                  className="comment-btn"
-                  onClick={() => saveComment()}>
+                  variant='light'
+                  size='sm'
+                  className='comment-btn'
+                  onClick={() => saveComment()}
+                >
                   <MdSend
-                    size="18px"
-                    className="text-primary"
-                    aria-label="send"
+                    size='18px'
+                    className='text-primary'
+                    aria-label='send'
                   />
                 </Button>
               </Row>
             </Col>
           </Row>
           {comment.isPhoto && (
-            <div className="comment-img-container">
+            <div className='comment-img-container'>
               <StorageImage
-                alt=""
+                alt=''
                 storagePath={`/${comment.photoURL}`}
-                className="img-to-comment"
+                className='img-to-comment'
               />
-              <div id="close-btn-container">
+              <div id='close-btn-container'>
                 <CloseButton onClick={deletePhoto} />
               </div>
             </div>
@@ -146,7 +149,7 @@ const Comments = (props) => {
       <UploadPhoto
         show={show}
         setShow={setShow}
-        updatePost={addPhotoToComment}
+        updateDatabase={addPhotoToComment}
       />
     </Col>
   );
