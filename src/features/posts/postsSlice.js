@@ -19,6 +19,8 @@ export const postsSlice = createSlice({
 					post.likes = JSON.parse(post.likes);
 					post.comments = JSON.parse(post.comments);
 					post.timestamp = new Date(post.timestamp).toLocaleString();
+					if (post.timestamp === "Invalid Date")
+						post.timestamp = new Date().toLocaleString();
 					state.unshift(post);
 				} else {
 					const i = state.findIndex((pst) => pst.postID === post.post_id);
