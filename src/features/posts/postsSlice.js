@@ -20,6 +20,10 @@ export const postsSlice = createSlice({
 					post.comments = JSON.parse(post.comments);
 					post.timestamp = new Date(post.timestamp).toLocaleString();
 					state.unshift(post);
+				} else {
+					const i = state.findIndex((pst) => pst.postID === post.post_id);
+					if (post.likes) state[i].likes = JSON.parse(post.likes);
+					if (post.comments) state[i].comments = JSON.parse(post.comments);
 				}
 			});
 			//return updatedState;
