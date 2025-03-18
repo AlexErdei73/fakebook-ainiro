@@ -12,37 +12,17 @@ import { postsUpdated } from "../features/posts/postsSlice";
 import { incomingMessagesUpdated } from "../features/incomingMessages/incomingMessagesSlice";
 import { outgoingMessagesUpdated } from "../features/outgoingMessages/outgoingMessagesSlice";
 
-// URL of my website.
-const FAKEBOOK_URL = "https://alexerdei73.github.io/fakebook-ainoro/";
+// SignalR Websockets code
 
-/*firebase.initializeApp(firebaseConfig);
-
-const appCheck = firebase.appCheck();
-// Pass your reCAPTCHA v3 site key (public key) to activate(). Make sure this
-// key is the counterpart to the secret key you set in the Firebase console.
-appCheck.activate(
-  "6LfCG9UhAAAAAL8vSI4Hbustx8baJEDMA0Sz1zD2",
-
-  // Optional argument. If true, the SDK automatically refreshes App Check
-  // tokens as needed.
-  true
-);
-
-const storage = firebase.storage();*/
-
-// Code from the image-storage project to handle the authentication and storage
-const BASE_URL = "https://alexerdei-team.us.ainiro.io/magic/modules/fakebook/";
 // URL to handle Websockets
 const SOCKETS_URL = "https://alexerdei-team.us.ainiro.io/sockets";
 
-// SignalR Websockets code
 import * as signalR from "@microsoft/signalr";
 
 let builder = new signalR.HubConnectionBuilder();
 
 let connection = builder
 	.withUrl(SOCKETS_URL, {
-		//accessTokenFactory: () => JSON.parse(localStorage.getItem("user")).token,
 		skipNegotiation: true,
 		transport: signalR.HttpTransportType.WebSockets,
 	})
@@ -51,6 +31,9 @@ let connection = builder
 connection.start().catch((err) => console.error(err.toString()));
 
 // End of websockets code
+
+// Code from the image-storage project to handle the authentication and storage
+const BASE_URL = "https://alexerdei-team.us.ainiro.io/magic/modules/fakebook/";
 
 async function getJSON(response) {
 	const json = await response.json();
@@ -115,56 +98,6 @@ async function uploadFile(file, token) {
 	}
 }
 
-async function getStorage(token) {
-	try {
-		const response = await fetch(`${BASE_URL}storage`, {
-			method: "GET",
-			mode: "cors",
-			headers: {
-				Authorization: token,
-			},
-		});
-		return await getJSON(response);
-	} catch (error) {
-		return { error };
-	}
-}
-
-async function downloadFile(folder, filename, token) {
-	try {
-		const response = await fetch(
-			`${BASE_URL}image?folder=${folder}&filename=${filename}`,
-			{
-				method: "GET",
-				mode: "cors",
-				headers: {
-					Authorization: token,
-				},
-			}
-		);
-		return await getBlob(response);
-	} catch (error) {
-		return { error };
-	}
-}
-
-async function deleteFile(folder, filename, token) {
-	try {
-		const response = await fetch(
-			`${BASE_URL}image?folder=${folder}&filename=${filename}`,
-			{
-				method: "DELETE",
-				mode: "cors",
-				headers: {
-					Authorization: token,
-				},
-			}
-		);
-		return await getJSON(response);
-	} catch (error) {
-		return { error };
-	}
-}
 // end of back-end code from the image-storage project
 
 async function getTable(table, token) {
@@ -183,12 +116,13 @@ async function getTable(table, token) {
 	}
 }
 
+// Handle fakebook specific endpoints
+
 async function updateUser(id, token, body) {
 	body.user_id = id;
 	if (body.isOnline) body.isOnline = Number(body.isOnline);
 	if (body.photos) body.photos = JSON.stringify(body.photos);
 	if (body.posts) body.posts = JSON.stringify(body.posts);
-	console.log(body);
 	try {
 		const response = await fetch(`${BASE_URL}users`, {
 			method: "PUT",
@@ -227,7 +161,6 @@ async function putPost(id, token, body) {
 	payload.post_id = id;
 	if (body.likes) payload.likes = JSON.stringify(body.likes);
 	if (body.comments) payload.comments = JSON.stringify(body.comments);
-	console.log(payload);
 	try {
 		const response = await fetch(`${BASE_URL}posts`, {
 			method: "PUT",
@@ -244,13 +177,7 @@ async function putPost(id, token, body) {
 	}
 }
 
-/*export async function getImageURL(imagePath) {
-	const imageRef = storage.ref(imagePath);
-	const url = await imageRef.getDownloadURL();
-	return url;
-}*/
-
-//const auth = firebase.auth();
+// Handling fakebook specific endpoints over
 
 export async function subscribeAuth() {
 	let user = localStorage.getItem("user");
@@ -283,14 +210,9 @@ export async function subscribeAuth() {
 	store.dispatch(loadingFinished());
 }
 
-/*const firestore = firebase.firestore();
-
-const usersCollection = firestore.collection("users");*/
-
 //The following global variables get values, when the UserAccount component renders and runs
 //subscribeCurrentUser. After that we use them globally in the following functions.
 let userID;
-let userDocRef;
 let token;
 
 export function subscribeCurrentUser() {
@@ -306,7 +228,6 @@ export function subscribeCurrentUser() {
 }
 
 export async function currentUserOnline() {
-	console.log(userID, token);
 	await updateUser(userID, token, { isOnline: true });
 }
 
@@ -328,7 +249,6 @@ export function subscribeUsers() {
 export async function signUserOut() {
 	store.dispatch(loadingStarted());
 	await currentUserOffline();
-	//await auth.signOut();
 	localStorage.removeItem("user");
 	store.dispatch(loadingFinished());
 	subscribeAuth();
@@ -341,11 +261,11 @@ export function subscribePosts() {
 	});
 	connection.on("fakebook.posts.post", (args) => {
 		const data = JSON.parse(args);
-		console.log("New post: ", data);
 		store.dispatch(postsUpdated([data]));
 	});
 }
 
+//TODO ...
 export function subscribeMessages(typeOfMessages) {
 	return () => {};
 	let typeOfUser;
@@ -415,11 +335,11 @@ export async function createUserAccount(user) {
 		console.log(error.message);
 	}
 }
+// end TODO
 
 export async function signInUser(user) {
 	const EMAIL_VERIFICATION_ERROR =
 		"Please verify your email before to continue";
-	//const NO_ERROR = "";
 	try {
 		const response = await login(user);
 		response.token = `Bearer ${response.token}`;
@@ -438,9 +358,11 @@ export async function signInUser(user) {
 	}
 }
 
+// TODO
 export function sendPasswordReminder(email) {
 	return auth.sendPasswordResetEmail(email);
 }
+// TODO end
 
 function getPostID() {
 	const posts = store.getState().posts;
@@ -461,7 +383,6 @@ export async function upload(post) {
 	post.comments = JSON.stringify(post.comments) || "[]";
 	post.user_id = post.userID;
 	delete post.userID;
-	console.log("post: ", post);
 	await postPosts(token, post);
 	const postID = post.post_id;
 	updateUserPosts(postID);
@@ -488,12 +409,10 @@ export async function addFileToStorage(file) {
 }
 
 export function updateProfile(profile) {
-	console.log(profile, userID);
 	updateUser(userID, token, profile);
 }
 
-//const refMessages = firestore.collection("messages");
-
+// TODO ...
 export function uploadMessage(msg) {
 	return refMessages.add({
 		...msg,
@@ -504,3 +423,4 @@ export function uploadMessage(msg) {
 export function updateToBeRead(messageID) {
 	return refMessages.doc(messageID).update({ isRead: true });
 }
+// End

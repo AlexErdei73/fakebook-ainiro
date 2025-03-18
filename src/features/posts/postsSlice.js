@@ -5,7 +5,6 @@ export const postsSlice = createSlice({
 	initialState: [],
 	reducers: {
 		postsUpdated: (state, action) => {
-			//const updatedState = [];
 			action.payload.forEach((post) => {
 				const isPostNew =
 					state.filter((pst) => pst.postID === post.post_id).length === 0;
