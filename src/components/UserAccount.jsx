@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TitleBar from "./Titlebar";
 import Profile from "./Profile";
 import PhotoViewer from "./PhotoViewer";
@@ -21,7 +21,9 @@ import {
 } from "../features/accountPage/accountPageSlice";
 
 const UserAccount = (props) => {
-  const profileLink = useSelector((state) => state.accountPage.profileLink);
+  const initProfileLink = useSelector((state) => state.accountPage.profileLink);
+
+  const [profileLink, setProfileLink] = useState(initProfileLink);
 
   const currentUser = useSelector((state) => state.currentUser);
   const users = useSelector((state) => state.users);
@@ -59,14 +61,14 @@ const UserAccount = (props) => {
   //We add the index of user to the profileLink if there are more users with the exact same userName
   const addIndexToProfileLink = () => {
     if (currentUser && currentUser.index && currentUser.index > 0) {
-      return `${profileLink}.${currentUser.index}`;
+      return `/fakebook/${currentUser.lastname}.${currentUser.firstname}.${currentUser.index}`;
     } else return profileLink;
   };
   const newProfileLink = addIndexToProfileLink();
-  useEffect(
-    () => dispatch(profileLinkSet(newProfileLink)),
-    [dispatch, newProfileLink]
-  );
+  useEffect(() => {
+    dispatch(profileLinkSet(newProfileLink));
+    setProfileLink(newProfileLink);
+  }, [dispatch, newProfileLink]);
 
   if (users.length === 0 || !currentUser) {
     return <div>...Loading</div>;
