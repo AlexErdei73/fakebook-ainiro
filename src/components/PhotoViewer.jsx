@@ -23,7 +23,7 @@ const PhotoViewer = () => {
   }, [location]);
 
   const handleSelect = (selectedIndex, e) => {
-    history.push(`/fakebook/photo/${userID}/${selectedIndex}`);
+    history.push(`/fakebook-ainiro/photo/${userID}/${selectedIndex}`);
   };
 
   return (

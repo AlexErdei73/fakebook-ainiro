@@ -331,16 +331,6 @@ const Contacts = () => {
       >
         <button
           type='button'
-          /*style={{
-            position: "fixed",
-            background: "white",
-            padding: "12px",
-            borderRadius: "50%",
-            bottom: "20px",
-            right: "calc((100vw - 100em) / 2 + 20px)",
-            boxShadow: "0px 5px 5px 0px lightgray",
-            border: "none",
-          }}*/
           className='msg-btn'
           onClick={() => handleClick(null)}
           aria-label='Message'

@@ -16,8 +16,8 @@ const MiniFriends = (props) => {
 
 	const friendsLink =
 		user.index && user.index > 0
-			? `/fakebook/${user.lastname}.${user.firstname}.${user.index}/Friends`
-			: `/fakebook/${user.lastname}.${user.firstname}/Friends`;
+			? `/fakebook-ainiro/${user.lastname}.${user.firstname}.${user.index}/Friends`
+			: `/fakebook-ainiro/${user.lastname}.${user.firstname}/Friends`;
 
 	function handleClick() {
 		handleClickLink(
@@ -44,8 +44,8 @@ const MiniFriends = (props) => {
 					{users.map((user, index) => {
 						const userProfileURL =
 							user.index && user.index > 0
-								? `/fakebook/${user.lastname}.${user.firstname}.${user.index}`
-								: `/fakebook/${user.lastname}.${user.firstname}`;
+								? `/fakebook-ainiro/${user.lastname}.${user.firstname}.${user.index}`
+								: `/fakebook-ainiro/${user.lastname}.${user.firstname}`;
 						const userName = `${user.firstname} ${user.lastname}`;
 						return (
 							//we render maximum 9 friends

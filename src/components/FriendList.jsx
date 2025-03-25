@@ -19,7 +19,7 @@ const FriendList = (props) => {
     <Col xs="auto" className="overflow-auto mh-100">
       <div id="col-1" className="m-2">
         {usersToUse.map((user, index) => {
-          let profileLink = `/fakebook/${user.lastname}.${user.firstname}`;
+          let profileLink = `/fakebook-ainiro/${user.lastname}.${user.firstname}`;
           if (user.index && user.index > 0)
             profileLink = profileLink + `.${user.index}`;
           return (

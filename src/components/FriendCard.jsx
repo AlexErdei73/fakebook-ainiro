@@ -17,8 +17,8 @@ const FriendCard = (props) => {
   function handleClick() {
     history.push(
       user.index && user.index > 0
-        ? `/fakebook/${user.lastname}.${user.firstname}.${user.index}`
-        : `/fakebook/${user.lastname}.${user.firstname}`
+        ? `/fakebook-ainiro/${user.lastname}.${user.firstname}.${user.index}`
+        : `/fakebook-ainiro/${user.lastname}.${user.firstname}`
     );
   }
 

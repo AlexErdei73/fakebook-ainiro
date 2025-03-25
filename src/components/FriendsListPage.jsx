@@ -10,7 +10,7 @@ import { linkUpdated } from "../features/link/linkSlice";
 
 const FriendsListPage = (props) => {
 
-	const FRIENDS_LIST_PAGE_PATH = "/fakebook/friends/list";
+	const FRIENDS_LIST_PAGE_PATH = "/fakebook-ainiro/friends/list";
 
 	const location = useLocation();
 	const dispatch = useDispatch();

@@ -15,7 +15,7 @@ const MiniPhotos = (props) => {
 
 	const NUMBER_OF_PHOTOS = 9;
 
-	const photosLink = `/fakebook/${user.lastname}.${user.firstname}/Photos`;
+	const photosLink = `/fakebook-ainiro/${user.lastname}.${user.firstname}/Photos`;
 
 	function handleClick() {
 		handleClickLink(
@@ -49,7 +49,7 @@ const MiniPhotos = (props) => {
 										paddingBottom: "0",
 									}}>
 									<Link
-										to={`/fakebook/photo/${userID}/${index}`}
+										to={`/fakebook-ainiro/photo/${userID}/${index}`}
 										className="text-body"
 										onClick={handleClick}
 										tabIndex="-1">

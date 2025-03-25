@@ -51,7 +51,7 @@ const Photos = (props) => {
           {photos.map((photo, index) => {
             return (
               <Col key={index} xs={6} sm={4} md={3} lg={2} className="p-1">
-                <Link to={`/fakebook/photo/${userID}/${index}`}>
+                <Link to={`/fakebook-ainiro/photo/${userID}/${index}`}>
                   <ResponsiveImage
                     width="100%"
                     height="100%"

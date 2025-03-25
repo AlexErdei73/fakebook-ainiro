@@ -43,7 +43,7 @@ function App() {
 
 	const firstName = name.join(" ");
 
-	const profileLink = `/fakebook/${lastName}.${firstName}`;
+	const profileLink = `/fakebook-ainiro/${lastName}.${firstName}`;
 
 	useEffect(() => {
 		if (lastName) dispatch(profileLinkSet(profileLink));

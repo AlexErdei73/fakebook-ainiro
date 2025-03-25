@@ -15,9 +15,7 @@ import { handleClickLink } from "./helper";
 import { linkUpdated } from "../features/link/linkSlice";
 import { friendsListPageSet } from "../features/accountPage/accountPageSlice";
 
-
 const TitleBar = (props) => {
-
 	const refs = {
 		home: useRef(null),
 		friends: useRef(null),
@@ -47,18 +45,18 @@ const TitleBar = (props) => {
 	function closeFriendsListPage() {
 		dispatch(friendsListPageSet(false));
 		dispatch(linkUpdated("profile"));
-	  }
+	}
 
 	return (
 		<div className="titlebar bg-light">
 			<Navbar bg="light" className="p-0 nav-container">
-				<Navbar.Brand as={Link} to="/fakebook">
+				<Navbar.Brand as={Link} to="/fakebook-ainiro">
 					<FaFacebook color="dodgerblue" fontSize="2em" className="mx-3" />
 				</Navbar.Brand>
 				<div style={{ width: "450px" }} className="spaceing" />
 				<Nav className="w-75 justify-content-start mr-5">
 					<Nav.Item className="first">
-						<Link to="/fakebook" className="nav-link" ref={refs.home}>
+						<Link to="/fakebook-ainiro" className="nav-link" ref={refs.home}>
 							<VscHome
 								fontSize="2rem"
 								className="mx-4"
@@ -68,7 +66,7 @@ const TitleBar = (props) => {
 					</Nav.Item>
 					<Nav.Item>
 						<Link
-							to="/fakebook/friends/list"
+							to="/fakebook-ainiro/friends/list"
 							className="nav-link"
 							ref={refs.friends}>
 							<FaUserFriends
@@ -79,7 +77,10 @@ const TitleBar = (props) => {
 						</Link>
 					</Nav.Item>
 					<Nav.Item>
-						<Link to="/fakebook/watch" className="nav-link" ref={refs.watch}>
+						<Link
+							to="/fakebook-ainiro/watch"
+							className="nav-link"
+							ref={refs.watch}>
 							<MdOndemandVideo
 								fontSize="2rem"
 								className="mx-4"
@@ -119,7 +120,7 @@ const TitleBar = (props) => {
 							<Dropdown.Divider />
 							<Dropdown.Item
 								as={Link}
-								to="/fakebook/"
+								to="/fakebook-ainiro/"
 								onClick={handleClick}
 								className="p-0">
 								<ImExit fontSize="1.5em" className="mx-4" />
