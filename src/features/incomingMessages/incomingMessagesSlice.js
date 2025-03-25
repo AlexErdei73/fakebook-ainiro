@@ -5,9 +5,27 @@ export const incomingMessagesSlice = createSlice({
   initialState: [],
   reducers: {
     incomingMessagesUpdated: (state, action) => {
-      const updatedState = [];
-      action.payload.forEach((message) => updatedState.push(message));
-      return updatedState;
+      action.payload.forEach((message) => {
+        const i = state.map((msg) => msg.messageID).indexOf(message.message_id);
+        const isMessageNew = i === -1;
+        if (isMessageNew) {
+          const msg = {
+            messageID: message.message_id,
+            isPhoto: Boolean(message.isPhoto),
+            isRead: Boolean(message.isRead),
+            photoURL: message.photoURL,
+            sender: message.sender,
+            recipient: message.recipient,
+            text: message.text,
+            timestamp: new Date(message.timestamp).toLocaleString(),
+          };
+          if (msg.timestamp === "Invalid Date")
+            msg.timestamp = new Date().toLocaleString();
+          state.push(msg);
+        } else {
+          state[i].isRead = message.isRead;
+        }
+      });
     },
   },
 });

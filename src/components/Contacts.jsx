@@ -67,6 +67,7 @@ const Contacts = () => {
 
   async function handleClose() {
     await updateReadStatusOfMessages(recipient);
+    console.log("Closing contacts!");
     removeSender();
     setShowOverlay(false);
     setRecipient(null);
@@ -115,10 +116,10 @@ const Contacts = () => {
   useEffect(() => {
     const unsubscribeIncomingMsg = subscribeMessages("incoming");
     const unsubscribeOutgoingMsg = subscribeMessages("outgoing");
-    return () => {
+    /*return () => {
       unsubscribeIncomingMsg();
       unsubscribeOutgoingMsg();
-    };
+    };*/
   }, []);
 
   const [senders, setSenders] = useState([]);
@@ -150,7 +151,7 @@ const Contacts = () => {
     );
     const updates = [];
     messagesToUpdate.forEach((msg) => {
-      const messageID = msg.id;
+      const { messageID } = msg;
       updates.push(updateToBeRead(messageID));
     });
     return Promise.all(updates);
@@ -170,8 +171,8 @@ const Contacts = () => {
       handleClick(recipient);
   return (
     <>
-      <Nav className="flex-column">
-        <h5 className="text-muted ml-3">
+      <Nav className='flex-column'>
+        <h5 className='text-muted ml-3'>
           <b>Contacts</b>
         </h5>
         {users.map((user, index) =>
@@ -179,19 +180,19 @@ const Contacts = () => {
             <div key={index}></div>
           ) : (
             <button
-              type="button"
+              type='button'
               key={index}
-              className="navitem text-dark flex-row justify-content-center p-2 mb-1 nav-btn bg-200"
+              className='navitem text-dark flex-row justify-content-center p-2 mb-1 nav-btn bg-200'
               onClick={() => handleClick(user)}
             >
-              <ProfileLink size="26" fullname="true" bold="false" user={user} />
+              <ProfileLink size='26' fullname='true' bold='false' user={user} />
             </button>
           )
         )}
       </Nav>
 
       <OverlayTrigger
-        placement="left-start"
+        placement='left-start'
         show={showOverlay}
         overlay={
           <Card
@@ -203,7 +204,7 @@ const Contacts = () => {
               maxHeight: `${window.innerHeight - 70}px`,
             }}
           >
-            <Card.Body className="overflow-none">
+            <Card.Body className='overflow-none'>
               <Card.Title>
                 {!recipient && (
                   <>
@@ -213,41 +214,41 @@ const Contacts = () => {
                 )}
                 {recipient && (
                   <ProfileLink
-                    size="26"
-                    fullname="true"
-                    bold="true"
+                    size='26'
+                    fullname='true'
+                    bold='true'
                     user={recipient}
                   />
                 )}
-                <div className="close-btn-container">
-                  <CloseButton onClick={handleClose} className="text-primary" />
+                <div className='close-btn-container'>
+                  <CloseButton onClick={handleClose} className='text-primary' />
                 </div>
               </Card.Title>
               <hr />
               {recipient && (
                 <Row
-                  className="mh-100 overflow-auto flex-column-reverse"
+                  className='mh-100 overflow-auto flex-column-reverse'
                   ref={convRowRef}
                 >
                   <Conversation sender={userID} recipient={recipient.userID} />
                 </Row>
               )}
               {!recipient && (
-                <Col className="h-75 overflow-auto">
+                <Col className='h-75 overflow-auto'>
                   {users.map((user, index) =>
                     user.userID === userID ? (
                       <div key={index}></div>
                     ) : (
                       <button
-                        type="button"
+                        type='button'
                         key={index}
-                        className="flex-row text-dark justify-content-start p-2 container-choose-to nav-btn w-100 mb-1 white"
+                        className='flex-row text-dark justify-content-start p-2 container-choose-to nav-btn w-100 mb-1 white'
                         onClick={() => handleClick(user)}
                       >
                         <ProfileLink
-                          size="36"
-                          fullname="true"
-                          bold="false"
+                          size='36'
+                          fullname='true'
+                          bold='false'
                           user={user}
                         />
                       </button>
@@ -257,39 +258,39 @@ const Contacts = () => {
               )}
             </Card.Body>
             {recipient && (
-              <Card.Footer className="mt-5">
+              <Card.Footer className='mt-5'>
                 <Row>
                   {message.text === "" && (
                     <Col xs={2}>
                       <Button
-                        variant="light"
-                        size="sm"
-                        className="add-photo-btn"
+                        variant='light'
+                        size='sm'
+                        className='add-photo-btn'
                         onClick={() => setShowPhotoDlg(true)}
                       >
                         <HiOutlinePhotograph
-                          size="21px"
-                          className="text-primary"
+                          size='21px'
+                          className='text-primary'
                         />
                       </Button>
                     </Col>
                   )}
                   <Col
                     xs={message.text === "" ? 8 : 10}
-                    className="align-self-center"
+                    className='align-self-center'
                     style={{
                       background: "#e9ecef",
                       borderRadius: "18px",
                     }}
                   >
                     {message.isPhoto && (
-                      <div className="comment-img-container">
+                      <div className='comment-img-container'>
                         <StorageImage
-                          alt=""
+                          alt=''
                           storagePath={`/${message.photoURL}`}
-                          className="img-to-comment"
+                          className='img-to-comment'
                         />
-                        <div className="close-btn-container">
+                        <div className='close-btn-container'>
                           <CloseButton onClick={deletePhoto} />
                         </div>
                       </div>
@@ -299,20 +300,20 @@ const Contacts = () => {
                       onKeyPress={(e) => handleKeyPress(e, saveMessage)}
                       welcomeText={WELCOME_TEXT}
                       value={message.text}
-                      className="w-100 mt-2"
+                      className='w-100 mt-2'
                     />
                   </Col>
                   <Col xs={2}>
                     <Button
-                      variant="light"
-                      size="sm"
-                      className="add-photo-btn"
+                      variant='light'
+                      size='sm'
+                      className='add-photo-btn'
                       onClick={() => {
                         if (message.text !== "" || message.isPhoto)
                           saveMessage();
                       }}
                     >
-                      <MdSend size="23px" className="text-primary" />
+                      <MdSend size='23px' className='text-primary' />
                     </Button>
                   </Col>
                 </Row>
@@ -329,7 +330,7 @@ const Contacts = () => {
         }
       >
         <button
-          type="button"
+          type='button'
           /*style={{
             position: "fixed",
             background: "white",
@@ -340,11 +341,11 @@ const Contacts = () => {
             boxShadow: "0px 5px 5px 0px lightgray",
             border: "none",
           }}*/
-          className="msg-btn"
+          className='msg-btn'
           onClick={() => handleClick(null)}
-          aria-label="Message"
+          aria-label='Message'
         >
-          <FiEdit size="22px" aria-hidden="true" />
+          <FiEdit size='22px' aria-hidden='true' />
         </button>
       </OverlayTrigger>
     </>
