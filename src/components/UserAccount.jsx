@@ -32,7 +32,7 @@ const UserAccount = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const unsubscribeCurrentUser = subscribeCurrentUser();
+    subscribeCurrentUser();
     const unsubscribeUsers = subscribeUsers();
     const unsubscribePosts = subscribePosts();
     //We make currentUser online
@@ -49,11 +49,10 @@ const UserAccount = (props) => {
       else currentUserOffline();
     };
     document.addEventListener("visibilitychange", visibilitychangeListener);
-    /*return () => {
-			unsubscribeCurrentUser();
-			unsubscribeUsers();
-			unsubscribePosts();
-		};*/
+    return () => {
+      unsubscribeUsers();
+      unsubscribePosts();
+    };
   }, []);
 
   //We add the index of user to the profileLink if there are more users with the exact same userName

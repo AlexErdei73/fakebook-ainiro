@@ -114,12 +114,9 @@ const Contacts = () => {
   }, [scrollHeight]);
 
   useEffect(() => {
-    const unsubscribeIncomingMsg = subscribeMessages("incoming");
-    const unsubscribeOutgoingMsg = subscribeMessages("outgoing");
-    /*return () => {
-      unsubscribeIncomingMsg();
-      unsubscribeOutgoingMsg();
-    };*/
+    const unsubscribeMsg = subscribeMessages("incoming");
+    subscribeMessages("outgoing");
+    return () => unsubscribeMsg();
   }, []);
 
   const [senders, setSenders] = useState([]);
