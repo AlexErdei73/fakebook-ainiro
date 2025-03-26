@@ -113,8 +113,8 @@ const Contacts = () => {
   }, [scrollHeight]);
 
   useEffect(() => {
-    const unsubscribeMsg = subscribeMessages("incoming");
-    subscribeMessages("outgoing");
+    subscribeMessages("incoming");
+    const unsubscribeMsg = subscribeMessages("outgoing");
     return () => unsubscribeMsg();
   }, []);
 

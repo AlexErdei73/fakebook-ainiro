@@ -342,18 +342,21 @@ export function subscribeMessages(typeOfMessages) {
     if (data[typeOfUser] !== userID) return;
     store.dispatch(actionCreator([data]));
   });
-  if (typeOfMessages !== "incoming") return;
-  connection.on("fakebook.message.put", (args) => {
-    const data = JSON.parse(args);
-    console.log([data], actionCreator);
-    const recipient = store
-      .getState()
-      .incomingMessages.find(
-        (msg) => msg.messageID === data.message_id
-      ).recipient;
-    if (recipient !== userID) return;
-    store.dispatch(actionCreator([data]));
-  });
+  if (typeOfMessages === "incoming") {
+    getMessages(userID, token, false).then((incomingMessages) =>
+      store.dispatch(incomingMessagesUpdated(incomingMessages))
+    );
+    connection.on("fakebook.message.put", (args) => {
+      const data = JSON.parse(args);
+      const recipient = store
+        .getState()
+        .incomingMessages.find(
+          (msg) => msg.messageID === data.message_id
+        ).recipient;
+      if (recipient !== userID) return;
+      store.dispatch(actionCreator([data]));
+    });
+  }
   return () => {
     connection.off("fakebook.message.put");
     connection.off("fakebook.message.post");
