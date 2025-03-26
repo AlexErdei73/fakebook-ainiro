@@ -14,10 +14,10 @@ export const outgoingMessagesSlice = createSlice({
           sender: message.sender,
           recipient: message.recipient,
           text: message.text,
-          timestamp: new Date(message.timestamp).toISOString(),
+          timestamp: new Date().toISOString(),
         };
-        if (msg.timestamp === "Invalid Date")
-          msg.timestamp = new Date().toISOString();
+        if (message.timestamp)
+          msg.timestamp = new Date(message.timestamp).toISOString();
         state.push(msg);
       });
     },
