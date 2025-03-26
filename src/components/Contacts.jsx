@@ -67,7 +67,6 @@ const Contacts = () => {
 
   async function handleClose() {
     await updateReadStatusOfMessages(recipient);
-    console.log("Closing contacts!");
     removeSender();
     setShowOverlay(false);
     setRecipient(null);

@@ -17,10 +17,10 @@ export const incomingMessagesSlice = createSlice({
             sender: message.sender,
             recipient: message.recipient,
             text: message.text,
-            timestamp: new Date(message.timestamp).toLocaleString(),
+            timestamp: new Date(message.timestamp).toISOString(),
           };
           if (msg.timestamp === "Invalid Date")
-            msg.timestamp = new Date().toLocaleString();
+            msg.timestamp = new Date().toISOString();
           state.push(msg);
         } else {
           state[i].isRead = message.isRead;
