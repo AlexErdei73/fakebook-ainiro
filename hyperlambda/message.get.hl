@@ -1,0 +1,139 @@
+
+// Read or list records from your message table in your fakebook database
+.arguments
+
+   // Number of records to return, defaults to 25 if not specified. Pass in -1 to return all records.
+   limit:long
+
+   // Offset into the dataset of where to start retrieving records
+   offset:long
+
+   // Fully qualified name of column to order by, must be in TABLE_NAME.COLUMN_NAME format
+   order:string
+
+   // What direction to order, can be 'asc' or 'desc' implying ascending and descending
+   direction:string
+
+   // Optional logical operator for filtering arguments, can be either 'or' or 'and'. Defaults to and.
+   operator:string
+   message.message_id.like:string
+   message.message_id.mt:string
+   message.message_id.lt:string
+   message.message_id.mteq:string
+   message.message_id.lteq:string
+   message.message_id.neq:string
+   message.message_id.eq:string
+   message.isRead.mt:long
+   message.isRead.lt:long
+   message.isRead.mteq:long
+   message.isRead.lteq:long
+   message.isRead.neq:long
+   message.isRead.eq:long
+   message.isPhoto.mt:long
+   message.isPhoto.lt:long
+   message.isPhoto.mteq:long
+   message.isPhoto.lteq:long
+   message.isPhoto.neq:long
+   message.isPhoto.eq:long
+   message.photoURL.like:string
+   message.photoURL.mt:string
+   message.photoURL.lt:string
+   message.photoURL.mteq:string
+   message.photoURL.lteq:string
+   message.photoURL.neq:string
+   message.photoURL.eq:string
+   message.recipient.like:string
+   message.recipient.mt:string
+   message.recipient.lt:string
+   message.recipient.mteq:string
+   message.recipient.lteq:string
+   message.recipient.neq:string
+   message.recipient.eq:string
+   message.sender.like:string
+   message.sender.mt:string
+   message.sender.lt:string
+   message.sender.mteq:string
+   message.sender.lteq:string
+   message.sender.neq:string
+   message.sender.eq:string
+   message.text.like:string
+   message.text.mt:string
+   message.text.lt:string
+   message.text.mteq:string
+   message.text.lteq:string
+   message.text.neq:string
+   message.text.eq:string
+   message.timestamp.mt:date
+   message.timestamp.lt:date
+   message.timestamp.mteq:date
+   message.timestamp.lteq:date
+   message.timestamp.neq:date
+   message.timestamp.eq:date
+
+// Meta data description for endpoint
+.description:Read or list records from your message table in your fakebook database
+
+// Type of endpoint
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+/*
+ * Checking if user supplied an [operator] argument, and if so
+ * changing the boolean operator for comparison operations.
+ */
+if
+   exists:x:@.arguments/*/operator
+   .lambda
+
+      // User provided a boolean comparison [operator] argument.
+      set-name:x:../*/data.connect/*/data.read/*/where/0
+         get-value:x:@.arguments/*/operator
+      remove-nodes:x:@.arguments/*/operator
+
+// Opening up our database connection.
+data.connect:[generic|fakebook]
+   database-type:sqlite
+
+   // Parametrising our read invocation with ordering arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+
+   // Parametrising our read invocation with paging arguments if specified.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      database-type:sqlite
+      table:message
+      columns
+         message.message_id
+         message.isRead
+         message.isPhoto
+         message.photoURL
+         message.recipient
+         message.sender
+         message.text
+         message.timestamp
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

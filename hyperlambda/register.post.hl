@@ -1,0 +1,113 @@
+// Register the user to the fakebook app and send a verification email.
+.arguments
+   lastname:string
+   password:string
+   email:string
+   firstname: string
+
+// Verify mandatory arguments
+validators.mandatory:x:@.arguments/*/lastname
+validators.mandatory:x:@.arguments/*/firstname
+validators.mandatory:x:@.arguments/*/password
+validators.mandatory:x:@.arguments/*/email
+
+// Verify email
+validators.email:x:@.arguments/*/email
+
+// Verify password length
+validators.string:x:@.arguments/*/password
+   min: 12
+
+// Create the user_id
+crypto.hash.sha256:x:@.arguments/*/email
+   
+// Hash the password
+crypto.password.hash:x:@.arguments/*/password
+
+// Throw error if email already exists
+data.connect:fakebook
+   data.read
+      table:users
+      where
+         and
+            email.eq:x:@.arguments/*/email
+   if
+      not-null:x:@data.read/**
+      .lambda
+         throw:Email already exists!
+            status:403
+            public:true
+            
+   // Getting index
+   data.read
+      table:users
+      columns
+         count(*)
+            as:count
+      where
+         and
+            firstname.eq:x:@.arguments/*/firstname
+            lastname.eq:x:@.arguments/*/lastname
+      limit:long:1
+   
+   // Save user in the database
+   data.create
+      table:users
+      values
+         user_id:x:@crypto.hash.sha256
+         lastname:x:@.arguments/*/lastname
+         email:x:@.arguments/*/email
+         firstname:x:@.arguments/*/firstname
+         password_hash:x:@crypto.password.hash
+         isEmailVerified:0
+         index:x:@data.read/*/*
+         isOnline:0
+         backgroundPictureURL:background-server.jpg
+         profilePictureURL:fakebook-avatar.jpeg
+         posts:[]
+         photos:[]
+
+// Make token for verification link
+config.get:"auth:secret"
+strings.concat
+   .email:x:@.arguments/*/email
+   .secret:x:@config.get
+crypto.hash.sha256:x:@strings.concat
+         
+// Create the link for the verifycation email
+strings.concat
+   .base-url:"https://alexerdei-team.us.ainiro.io/magic/modules/fakebook/verify"
+   .:"?email="
+   .email:x:@.arguments/*/email
+   .:"&token="
+   .token:x:@crypto.hash.sha256
+.url:x:-
+
+// Make name
+strings.concat
+   .:x:@.arguments/*/firstname
+   .:" "
+   .:x:@.arguments/*/lastname
+.name:x:@strings.concat
+
+// Add the link to the text
+strings.concat
+   .:@"Please click on the link below to verify your email!
+                                           
+"
+   .url:x:@.url
+               
+// Send verification email
+unwrap:x:./*/mail.smtp.send/**
+mail.smtp.send
+   message
+      to
+         .
+            name:x:@.name
+            email:x:@.arguments/*/email
+      subject:Please verify your email!
+      entity:text/plain
+         content:x:@strings.concat
+
+return
+   message:OK

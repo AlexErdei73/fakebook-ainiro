@@ -1,0 +1,42 @@
+
+// Delete one record from your message table in your fakebook database
+.arguments
+
+   // Primary key of record to delete, mandatory argument
+   message_id:string
+
+// Meta data description for endpoint
+.description:Delete one record from your message table in your fakebook database
+
+// Type of endpoint
+.type:crud-delete
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,admin
+validators.mandatory:x:@.arguments/*/message_id
+
+// Opening up our database connection.
+data.connect:[generic|fakebook]
+   database-type:sqlite
+
+   // Parametrising our delete invocation.
+   add:x:./*/data.delete/*/where/*/and
+      get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
+   data.delete
+      database-type:sqlite
+      table:message
+      where
+         and
+
+   // Publishing socket message.
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:fakebook.message.delete
+      args
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.delete

@@ -1,0 +1,78 @@
+
+// Create one record in your posts table in your fakebook database
+.arguments
+
+   // post_id column value
+   post_id:string
+
+   // isPhoto column value
+   isPhoto:long
+
+   // isYoutube column value
+   isYoutube:long
+
+   // photoURL column value
+   photoURL:string
+
+   // youtubeURL column value
+   youtubeURL:string
+
+   // text column value
+   text:string
+
+   // comments column value
+   comments:string
+
+   // likes column value
+   likes:string
+
+   // user_id column value
+   user_id:string
+
+   // timestamp column value
+   timestamp:date
+
+// Meta data description for endpoint
+.description:Create one record in your posts table in your fakebook database
+
+// Type of endpoint
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+.foreign-keys
+   .
+      column:user_id
+      table:users
+      foreign_column:user_id
+      foreign_name:user_id
+      long:bool:true
+
+// Opening up database connection.
+data.connect:[generic|fakebook]
+   database-type:sqlite
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      database-type:sqlite
+      table:posts
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Publishing socket message.
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:fakebook.posts.post
+      args
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success

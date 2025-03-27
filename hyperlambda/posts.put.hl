@@ -1,0 +1,75 @@
+
+// Update one record in your posts table in your fakebook database
+.arguments
+
+   // post_id column value being primary key of record to update, mandatory argument
+   post_id:string
+
+
+   // comments column's new value
+   comments:string
+
+   // likes column's new value
+   likes:string
+
+
+// Meta data description for endpoint
+.description:Update one record in your posts table in your fakebook database
+
+// Type of endpoint
+.type:crud-update
+
+// Sanity checking invocation, making sure primary key(s) are specified.
+validators.mandatory:x:@.arguments/*/post_id
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+.foreign-keys
+   .
+      column:user_id
+      table:users
+      foreign_column:user_id
+      foreign_name:user_id
+      long:bool:true
+
+// Opening up our database connection.
+data.connect:[generic|fakebook]
+   database-type:sqlite
+
+   // Parametrising our invocation.
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/[1,1000]
+   add:x:./*/data.update/*/where/*/and
+      get-nodes:x:@.arguments/*/[0,1]
+
+   // Invoking our update slot.
+   data.update
+      database-type:sqlite
+      table:posts
+      values
+      where
+         and
+
+   // Verifying record exists.
+   if
+      eq
+         get-value:x:@data.update
+         .:int:0
+      .lambda
+         response.status.set:404
+         return
+            result:Record not found
+
+   // Returning the correct status code.
+   response.status.set:202
+
+   // Publishing socket message.
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:fakebook.posts.put
+      args
+
+   // Returning success to caller.
+   unwrap:x:+/*
+   return
+      affected:x:@data.update

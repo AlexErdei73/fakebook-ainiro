@@ -1,0 +1,76 @@
+
+// Read or list records from your users table in your fakebook database
+.arguments
+
+   // Number of records to return, defaults to 25 if not specified. Pass in -1 to return all records.
+
+   // Offset into the dataset of where to start retrieving records
+
+   // Fully qualified name of column to order by, must be in TABLE_NAME.COLUMN_NAME format
+
+   // What direction to order, can be 'asc' or 'desc' implying ascending and descending
+   users.user_id.like:string
+   users.user_id.eq:string
+   users.email.like:string
+   users.email.eq:string
+   users.isEmailVerified.eq:long
+   users.firstname.like:string
+   users.firstname.eq:string
+   users.lastname.like:string
+   users.lastname.eq:string
+   users.index.eq:long
+   users.isOnline.eq:long
+   users.password_hash.like:string
+   users.password_hash.eq:string
+   users.backgroundPictureURL.like:string
+   users.backgroundPictureURL.eq:string
+   users.profilePictureURL.like:string
+   users.profilePictureURL.eq:string
+   users.photos.like:string
+   users.photos.eq:string
+   users.posts.like:string
+   users.posts.eq:string
+
+// Meta data description for endpoint
+.description:Read or list records from your users table in your fakebook database
+
+// Type of endpoint
+.type:crud-read
+
+// Columns with custom handling as frontend is generated.
+.handling
+   users.email:email
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+
+// Opening up our database connection.
+data.connect:[generic|fakebook]
+   database-type:sqlite
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      database-type:sqlite
+      table:users
+      columns
+         users.user_id
+         users.email
+         users.isEmailVerified
+         users.firstname
+         users.lastname
+         users.index
+         users.isOnline
+         users.password_hash
+         users.backgroundPictureURL
+         users.profilePictureURL
+         users.photos
+         users.posts
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

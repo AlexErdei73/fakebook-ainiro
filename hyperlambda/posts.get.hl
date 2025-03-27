@@ -1,0 +1,66 @@
+
+// Read or list records from your posts table in your fakebook database
+.arguments
+
+   // Number of records to return, defaults to 25 if not specified. Pass in -1 to return all records.
+
+   // Offset into the dataset of where to start retrieving records
+
+   // Fully qualified name of column to order by, must be in TABLE_NAME.COLUMN_NAME format
+
+   // What direction to order, can be 'asc' or 'desc' implying ascending and descending
+   posts.post_id.like:string
+   posts.post_id.eq:string
+   posts.isPhoto.eq:long
+   posts.isYoutube.eq:long
+   posts.photoURL.like:string
+   posts.photoURL.eq:string
+   posts.youtubeURL.like:string
+   posts.youtubeURL.eq:string
+   posts.text.like:string
+   posts.text.eq:string
+   posts.comments.like:string
+   posts.comments.eq:string
+   posts.likes.like:string
+   posts.likes.eq:string
+   posts.user_id.like:string
+   posts.user_id.eq:string
+   posts.timestamp.eq:date
+
+// Meta data description for endpoint
+.description:Read or list records from your posts table in your fakebook database
+
+// Type of endpoint
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+
+// Opening up our database connection.
+data.connect:[generic|fakebook]
+   database-type:sqlite
+
+   // Parametrising our read invocation with filtering arguments.
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      database-type:sqlite
+      table:posts
+      columns
+         posts.post_id
+         posts.isPhoto
+         posts.isYoutube
+         posts.photoURL
+         posts.youtubeURL
+         posts.text
+         posts.comments
+         posts.likes
+         posts.user_id
+         posts.timestamp
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*

@@ -1,0 +1,65 @@
+
+// Create one record in your message table in your fakebook database
+.arguments
+
+   // message_id column value
+   message_id:string
+
+   // isRead column value
+   isRead:long
+
+   // isPhoto column value
+   isPhoto:long
+
+   // photoURL column value
+   photoURL:string
+
+   // recipient column value
+   recipient:string
+
+   // sender column value
+   sender:string
+
+   // text column value
+   text:string
+
+   // timestamp column value
+   timestamp:date
+
+// Meta data description for endpoint
+.description:Create one record in your message table in your fakebook database
+
+// Type of endpoint
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:guest
+
+// Opening up database connection.
+data.connect:[generic|fakebook]
+   database-type:sqlite
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      database-type:sqlite
+      table:message
+      return-id:bool:false
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Publishing socket message.
+   add:x:./*/sockets.signal/*/args
+      get-nodes:x:@.arguments/*
+   sockets.signal:fakebook.message.post
+      args
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      result:success
