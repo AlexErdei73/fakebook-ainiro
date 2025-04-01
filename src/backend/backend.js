@@ -226,6 +226,17 @@ function putMessages(id, token, body) {
   });
 }
 
+async function getPswReminderEmail(email) {
+  const response = await fetch(`${BASE_URL}pswreminder?email=${email}`, {
+    method: "GET",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return await getJSON(response);
+}
+
 // Handling fakebook specific endpoints over
 
 export async function subscribeAuth() {
@@ -395,11 +406,9 @@ export async function signInUser(user) {
   }
 }
 
-// TODO
-export function sendPasswordReminder(email) {
-  return; //auth.sendPasswordResetEmail(email);
+export async function sendPasswordReminder(email) {
+  return await getPswReminderEmail(email);
 }
-// TODO end
 
 function getPostID() {
   const posts = store.getState().posts;
