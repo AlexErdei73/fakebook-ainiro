@@ -99,7 +99,7 @@ async function uploadFile(file, token) {
 
 async function getTable(table, token) {
   try {
-    const response = await fetch(`${BASE_URL}${table}`, {
+    const response = await fetch(`${BASE_URL}${table}?limit=-1`, {
       method: "GET",
       mode: "cors",
       headers: {
