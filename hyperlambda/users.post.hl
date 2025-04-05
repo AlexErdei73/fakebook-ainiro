@@ -73,6 +73,7 @@ data.connect:[generic|fakebook]
    add:x:./*/sockets.signal/*/args
       get-nodes:x:@.arguments/*
    sockets.signal:fakebook.users.post
+      roles:guest
       args
 
    // Returning result of above invocation to caller.

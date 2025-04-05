@@ -37,4 +37,4 @@ execute:magic.workflows.actions.execute
    name:http-redirect
    filename:/misc/workflows/actions/http/http-redirect.hl
    arguments
-      url:"https://alexerdei73.github.io/fakebook"
+      url:"https://alexerdei73.github.io/fakebook-ainiro"

@@ -1,0 +1,70 @@
+//Change user password with reset token
+.arguments
+   token:string
+   newPassword:string
+
+
+// Validate password length
+if
+   lt
+      strings.length:x:@.arguments/*/newPassword
+      .int:12
+
+   .lambda
+      throw:Password must be at least 12 characters long
+         status:400
+         public:true
+         field:newPassword
+
+//Get date now
+date.now
+         
+// Check token validity
+data.connect:fakebook
+   data.read
+      table:password_reset_tokens
+      where
+         and
+            token.eq:x:@.arguments/*/token
+            expires.mt:x:@date.now
+
+   // Check if valid token exists
+   if
+      not-null:x:@data.read/**
+   
+      .lambda
+         // Retrieve associated email
+         .email:x:@data.read/*/*/email
+
+
+         // Hash new password
+         crypto.password.hash:x:@.arguments/*/newPassword
+
+
+         // Update user password
+         data.update
+            table:users
+            values
+               password_hash:x:@crypto.password.hash
+            where
+               and
+                  email.eq:x:@.email
+
+
+         // Delete used token to prevent reuse
+         data.delete
+            table:password_reset_tokens
+            where
+               and
+                  token.eq:x:@.arguments/*/token
+
+
+         // Return success
+         return-value:Password successfully changed
+
+   else
+      // Invalid or expired token
+      throw:Invalid or expired token
+         status:403
+         public:true
+         field:token
