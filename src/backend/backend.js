@@ -12,6 +12,11 @@ import { postsUpdated } from "../features/posts/postsSlice";
 import { incomingMessagesUpdated } from "../features/incomingMessages/incomingMessagesSlice";
 import { outgoingMessagesUpdated } from "../features/outgoingMessages/outgoingMessagesSlice";
 
+//The following global variables get values, when the UserAccount component renders and runs
+//subscribeCurrentUser. After that we use them globally in the following functions.
+let userID;
+let token;
+
 // SignalR Websockets code
 
 // URL to handle Websockets
@@ -21,15 +26,22 @@ import * as signalR from "@microsoft/signalr";
 
 let builder = new signalR.HubConnectionBuilder();
 
-let connection = builder
-  .withUrl(SOCKETS_URL, {
-    skipNegotiation: true,
-    transport: signalR.HttpTransportType.WebSockets,
-  })
-  .build();
+let connection;
 
-connection.start().catch((err) => console.error(err.toString()));
+function buildConnection(token) {
+  connection = builder
+    .withUrl(SOCKETS_URL, {
+      accessTokenFactory: () => token.split(" ")[1],
+      skipNegotiation: true,
+      transport: signalR.HttpTransportType.WebSockets,
+    })
+    .withAutomaticReconnect()
+    .build();
+}
 
+async function startConnection() {
+  await connection.start().catch((err) => console.error(err.toString()));
+}
 // End of websockets code
 
 // Code from the image-storage project to handle the authentication and storage
@@ -263,6 +275,10 @@ export async function subscribeAuth() {
       store.dispatch(currentUserUpdated(userData));
       const displayName = `${firstname} ${lastname}`;
       store.dispatch(signIn({ id, displayName, isEmailVerified }));
+      if (!connection) {
+        buildConnection(token);
+        await startConnection();
+      }
     } catch (error) {
       localStorage.removeItem("user");
       store.dispatch(errorOccured(error.message));
@@ -274,16 +290,10 @@ export async function subscribeAuth() {
   store.dispatch(loadingFinished());
 }
 
-//The following global variables get values, when the UserAccount component renders and runs
-//subscribeCurrentUser. After that we use them globally in the following functions.
-let userID;
-let token;
-
 export function subscribeCurrentUser() {
   const user = store.getState().user;
   userID = user.id; //These are
   token = JSON.parse(localStorage.getItem("user")).token; // global values
-  //store.dispatch(currentUserUpdated({ user }));
   connection.on("fakebook.users.put", (args) => {
     const data = JSON.parse(args);
     if (data.user_id !== userID) return;
