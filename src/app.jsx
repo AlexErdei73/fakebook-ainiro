@@ -12,6 +12,7 @@ import PasswordReminderModal from "./components/PasswordReminderModal";
 import { useDispatch, useSelector } from "react-redux";
 import { subscribeAuth } from "./backend/backend";
 import { profileLinkSet } from "./features/accountPage/accountPageSlice";
+import LoadingSpinner from "./components/LoadinSpinner.jsx";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -58,7 +59,7 @@ function App() {
   }
 
   if (user.isLoading) {
-    return <div>...Loading</div>;
+    return <LoadingSpinner />;
   }
 
   if (user.isSignedIn && !user.error) {
