@@ -39,9 +39,19 @@ export const currentUserSlice = createSlice({
 				posts.forEach((post) => state.posts.push(post));
 			}
 		},
+		currentUserLoggedOut: (state) => {
+			state.isOnline = false;
+			state.firstname = "";
+			state.lastname = "";
+			state.backgroundPictureURL = "background-server.jpg";
+			state.profilePictureURL = "fakebook-avatar.jpeg";
+			state.photos = [];
+			state.posts = [];
+		},
 	},
 });
 
-export const { currentUserUpdated } = currentUserSlice.actions;
+export const { currentUserUpdated, currentUserLoggedOut } =
+	currentUserSlice.actions;
 
 export default currentUserSlice.reducer;
