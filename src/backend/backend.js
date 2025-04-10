@@ -12,8 +12,8 @@ import {
 } from "../features/currentUser/currentUserSlice";
 import { usersUpdated, usersDeleted } from "../features/users/usersSlice";
 import { postsUpdated } from "../features/posts/postsSlice";
-import { incomingMessagesUpdated } from "../features/incomingMessages/incomingMessagesSlice";
-import { outgoingMessagesUpdated } from "../features/outgoingMessages/outgoingMessagesSlice";
+import { incomingMessagesDeleted, incomingMessagesUpdated } from "../features/incomingMessages/incomingMessagesSlice";
+import { outgoingMessagesDeleted, outgoingMessagesUpdated } from "../features/outgoingMessages/outgoingMessagesSlice";
 
 //The following global variables get values, when the UserAccount component renders and runs
 //subscribeCurrentUser. After that we use them globally in the following functions.
@@ -333,6 +333,8 @@ export async function signUserOut() {
 	await currentUserOffline();
 	store.dispatch(currentUserLoggedOut());
 	store.dispatch(usersDeleted());
+	store.dispatch(incomingMessagesDeleted());
+	store.dispatch(outgoingMessagesDeleted());
 	localStorage.removeItem("user");
 	store.dispatch(loadingFinished());
 	subscribeAuth();

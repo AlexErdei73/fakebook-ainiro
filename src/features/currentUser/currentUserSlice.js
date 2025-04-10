@@ -28,15 +28,18 @@ export const currentUserSlice = createSlice({
 			state.profilePictureURL = profilePictureURL || state.profilePictureURL;
 			state.backgroundPictureURL =
 				backgroundPictureURL || state.backgroundPictureURL;
-			state.isOnline = isOnline || state.isOnline;
-			if (index) state.index = index || state.index;
+			if (isOnline || isOnline === 0 || isOnline === false)
+				state.isOnline = isOnline;
+			if (index >= 0) state.index = index;
 			if (photos) {
 				state.photos = [];
-				photos.forEach((photo) => state.photos.push(photo));
+				if (!Array.isArray(photos)) state.photos = JSON.parse(photos);
+				else photos.forEach((photo) => state.photos.push(photo));
 			}
 			if (posts) {
 				state.posts = [];
-				posts.forEach((post) => state.posts.push(post));
+				if (!Array.isArray(posts)) state.posts = JSON.parse(posts);
+				else posts.forEach((post) => state.posts.push(post));
 			}
 		},
 		currentUserLoggedOut: (state) => {
