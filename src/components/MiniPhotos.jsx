@@ -15,7 +15,7 @@ const MiniPhotos = (props) => {
 
 	const NUMBER_OF_PHOTOS = 9;
 
-	const photosLink = `/fakebook-ainiro/${user.lastname}.${user.firstname}/Photos`;
+	const photosLink = `/fakebook-ainiro/${user.lastname}.${user.firstname}${user.index>0?`.${user.index}`:''}/Photos`;
 
 	function handleClick() {
 		handleClickLink(
