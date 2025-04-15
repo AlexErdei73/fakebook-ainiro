@@ -312,7 +312,23 @@ export async function currentUserOnline() {
 export async function currentUserOffline() {
 	await updateUser(userID, token, { isOnline: false });
 }
-
+export function currentUserOfflineBeacon(userID, token) {
+	const body = {
+	  user_id: userID,
+	  isOnline: 0,
+	};
+  
+	const url = `${BASE_URL}users`;
+	const headers = {
+	  type: "application/json",
+	  Authorization: token,
+	};
+  
+	const blob = new Blob([JSON.stringify(body)], headers);
+  
+	navigator.sendBeacon(url, blob);
+  }
+  
 export function subscribeUsers() {
 	connection.on("fakebook.users.put", (args) => {
 		const data = JSON.parse(args);
@@ -331,6 +347,20 @@ export function subscribeUsers() {
 export async function signUserOut() {
 	store.dispatch(loadingStarted());
 	await currentUserOffline();
+	store.dispatch(currentUserLoggedOut());
+	store.dispatch(usersDeleted());
+	store.dispatch(incomingMessagesDeleted());
+	store.dispatch(outgoingMessagesDeleted());
+	localStorage.removeItem("user");
+	store.dispatch(loadingFinished());
+	subscribeAuth();
+}
+export async function signUserOutFast() {
+	store.dispatch(loadingStarted());
+	const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.id && user?.token) {
+      currentUserOfflineBeacon(user.id, user.token);
+    };
 	store.dispatch(currentUserLoggedOut());
 	store.dispatch(usersDeleted());
 	store.dispatch(incomingMessagesDeleted());

@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { subscribeAuth } from "./backend/backend";
 import { profileLinkSet } from "./features/accountPage/accountPageSlice";
 import LoadingSpinner from "./components/LoadinSpinner.jsx";
+import { signUserOutFast } from "./backend/backend";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -23,6 +24,22 @@ function App() {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    const handleUnload = () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      signUserOutFast(); // Sync-safe logout
+    };
+  
+    window.addEventListener("unload", handleUnload);
+    window.addEventListener("beforeunload", handleUnload);
+  
+    return () => {
+      window.removeEventListener("unload", handleUnload);
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, []);
+  
+  
   //Handle the modal
   const [show, setShow] = useState(false);
 
