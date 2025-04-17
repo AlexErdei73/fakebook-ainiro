@@ -13,59 +13,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { currentUserOnline, subscribeAuth } from "./backend/backend";
 import { profileLinkSet } from "./features/accountPage/accountPageSlice";
 import LoadingSpinner from "./components/LoadinSpinner.jsx";
-import { signUserOut ,currentUserOfflineBeacon } from "./backend/backend";
 
 function App() {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const SESSION_TIMEOUT = 5000
   useEffect(() => {
     const unsubscribe = subscribeAuth();
     return unsubscribe;
   }, []);
 
-  useEffect(() => {
-    const now = Date.now();
-    const lastActivity = localStorage.getItem("lastActivity");
-  
-    if (lastActivity && now - Number(lastActivity) > SESSION_TIMEOUT) {
-      signUserOut(); // Session expired
-    } else {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user?.id && user?.token) {
-        // Use requestIdleCallback if available (better performance)
-        if ('requestIdleCallback' in window) {
-          (window).requestIdleCallback(() => {
-            currentUserOnline(user.id, user.token);
-          });
-        }
-        
-      }
-    }
-  
-    localStorage.setItem("lastActivity", now.toString()); // ✅ Move it here safely
-  }, []);
-  
-  useEffect(() => {
-    const handleUnload = () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user?.id && user?.token) {
-        currentUserOfflineBeacon(user.id, user.token);
-      }
-      localStorage.setItem("lastActivity", Date.now().toString());
-    };
-  
-    window.addEventListener("beforeunload", handleUnload);
-    window.addEventListener("unload", handleUnload);
-  
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-      window.removeEventListener("unload", handleUnload);
-    };
-  }, []);
-  
-  
-  
+
   //Handle the modal
   const [show, setShow] = useState(false);
 
