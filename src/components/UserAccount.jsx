@@ -39,14 +39,9 @@ const UserAccount = (props) => {
     currentUserOnline();
     //We add event listener for the event when the user closes the browser window
     const handleUnload = () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user?.id && user?.token) {
-        currentUserOfflineBeacon(user.id, user.token);
-      }
-      localStorage.setItem("lastActivity", Date.now().toString());
+        currentUserOffline(true);
     };
   
-    window.addEventListener("beforeunload", handleUnload);
     window.addEventListener("unload", handleUnload);
     //we add event listener for the event when the browser window change visibility
     const visibilitychangeListener = (e) => {
@@ -55,7 +50,6 @@ const UserAccount = (props) => {
     };
     document.addEventListener("visibilitychange", visibilitychangeListener);
     return () => {
-      window.removeEventListener("beforeunload", handleUnload);
       window.removeEventListener("unload", handleUnload);
       unsubscribeUsers();
       unsubscribePosts();

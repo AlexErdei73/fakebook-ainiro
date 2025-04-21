@@ -309,11 +309,9 @@ export async function currentUserOnline() {
 	await updateUser(userID, token, { isOnline: true });
 }
 
-export async function currentUserOffline() {
-	await updateUser(userID, token, { isOnline: false });
-}
-export function currentUserOfflineBeacon(userID, token) {
-	const body = {
+export async function currentUserOffline(isUnload=false) {
+	if(isUnload)
+	{	const body = {
 		user_id: userID,
 		isOnline: 0,
 	};
@@ -327,6 +325,10 @@ export function currentUserOfflineBeacon(userID, token) {
 	const blob = new Blob([JSON.stringify(body)], headers);
 
 	navigator.sendBeacon(url, blob);
+	}
+	else{
+		await updateUser(userID, token, { isOnline: false });
+	}
 }
 
 export function subscribeUsers() {
