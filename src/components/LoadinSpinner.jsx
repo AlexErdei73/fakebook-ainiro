@@ -4,7 +4,7 @@ const LoadingSpinner = () => (
     style={{ height: "100vh" }}
   >
     <div className='spinner-border text-primary' role='status'>
-      <span className='sr-only'>Loading...</span>
+      <span className='visually-hidden '>Loading...</span>
     </div>
   </div>
 );
