@@ -38,11 +38,11 @@ const UserAccount = (props) => {
     //We make currentUser online
     currentUserOnline();
     //We add event listener for the event when the user closes the browser window
-    const beforeunloadListener = (e) => {
-      //We put the user offline
-      currentUserOffline();
+    const handleUnload = () => {
+        currentUserOffline(true);
     };
-    window.addEventListener("beforeunload", beforeunloadListener);
+  
+    window.addEventListener("unload", handleUnload);
     //we add event listener for the event when the browser window change visibility
     const visibilitychangeListener = (e) => {
       if (document.visibilityState === "visible") currentUserOnline();
@@ -50,6 +50,7 @@ const UserAccount = (props) => {
     };
     document.addEventListener("visibilitychange", visibilitychangeListener);
     return () => {
+      window.removeEventListener("unload", handleUnload);
       unsubscribeUsers();
       unsubscribePosts();
     };
