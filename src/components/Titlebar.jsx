@@ -55,13 +55,18 @@ const TitleBar = (props) => {
   return (
     <div className='titlebar bg-light'>
       <Navbar bg='light' className='p-0 nav-container'>
-        <Navbar.Brand as={Link} to='/fakebook-ainiro'>
+        <Navbar.Brand as={Link} to='/fakebook-ainiro' aria-label='Fakebook'>
           <FaFacebook color='dodgerblue' fontSize='2em' className='mx-3' />
         </Navbar.Brand>
         <div style={{ width: "450px" }} className='spaceing' />
         <Nav className='w-75 justify-content-start mr-5'>
           <Nav.Item className='first'>
-            <Link to='/fakebook-ainiro' className='nav-link' ref={refs.home}>
+            <Link
+              to='/fakebook-ainiro'
+              className='nav-link'
+              ref={refs.home}
+              aria-label='home page'
+            >
               <VscHome
                 fontSize='2rem'
                 className='mx-4'
@@ -74,6 +79,7 @@ const TitleBar = (props) => {
               to='/fakebook-ainiro/friends/list'
               className='nav-link'
               ref={refs.friends}
+              aria-label='friends list page'
             >
               <FaUserFriends
                 fontSize='2rem'
@@ -87,6 +93,7 @@ const TitleBar = (props) => {
               to='/fakebook-ainiro/watch'
               className='nav-link'
               ref={refs.watch}
+              aria-label='watch videos page'
             >
               <MdOndemandVideo
                 fontSize='2rem'
