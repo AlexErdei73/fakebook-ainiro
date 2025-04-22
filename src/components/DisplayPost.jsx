@@ -64,7 +64,7 @@ const DisplayPost = (props) => {
   return (
     <Card {...rest}>
       <Card.Header>
-        <ProfileLink user={user} size="40" fullname="true" bold="true" />
+        <ProfileLink user={user} size='40' fullname='true' bold='true' />
         <span
           style={{
             fontSize: "12px",
@@ -76,16 +76,16 @@ const DisplayPost = (props) => {
       <Card.Body>
         <Card.Text>{post.text}</Card.Text>
         {post.isPhoto && (
-          <StorageImage alt="" storagePath={post.photoURL} className="w-100" />
+          <StorageImage alt='' storagePath={post.photoURL} className='w-100' />
         )}
         {post.isYoutube && (
-          <div className="video-container">
+          <div className='video-container'>
             <ReactPlayer
-              className="react-player"
+              className='react-player'
               url={getYouTubeURL(post.youtubeURL)}
               light
-              width="100%"
-              height="100%"
+              width='100%'
+              height='100%'
               playing
               controls
             />
@@ -94,23 +94,23 @@ const DisplayPost = (props) => {
       </Card.Body>
       <Card.Footer>
         <Button
-          variant="link"
-          className="text-muted"
+          variant='link'
+          className='text-dark'
           onClick={() => {
             if (post.likes.length > 0) setShow(true);
           }}
           style={{ boxShadow: "none" }}
         >
           <AiFillLike
-            className="bg-primary text-light mr-2"
+            className='bg-primary-custom text-light mr-2'
             style={{ borderRadius: "50%" }}
-            aria-label="likes"
+            aria-label='likes'
           />
           {post.likes.length}
         </Button>
         <Button
-          variant="link"
-          className="text-muted float-right"
+          variant='link'
+          className='text-dark float-right'
           onClick={() => setShowComments(!showComments)}
           style={{ boxShadow: "none" }}
         >
@@ -118,23 +118,23 @@ const DisplayPost = (props) => {
         </Button>
         <hr />
         <Button
-          variant="light"
-          className={`${isLiked() ? "text-primary" : "text-muted"} w-50`}
+          variant='light'
+          className={`${isLiked() ? "text-primary-custom" : "text-dark"} w-50`}
           onClick={handleClick}
         >
           {isLiked() ? (
-            <AiFillLike size="22px" />
+            <AiFillLike size='22px' />
           ) : (
-            <AiOutlineLike size="22px" />
+            <AiOutlineLike size='22px' />
           )}
           <b> Like</b>
         </Button>
         <Button
-          variant="light"
-          className="text-muted w-50"
+          variant='light'
+          className='text-dark w-50'
           onClick={handleCommentClick}
         >
-          <GoComment size="22px" />
+          <GoComment size='22px' />
           <b> Comment</b>
         </Button>
         {showComments && <Comments post={post} />}

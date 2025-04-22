@@ -1,9 +1,17 @@
 .posts {
-    height: 1000px;
+  height: 1000px;
+}
+
+.text-primary-custom {
+  color: #0059ff;
+}
+
+.bg-primary-custom {
+  background-color: #0059ff;
 }
 
 @media (max-width: 600px) {
-    .posts {
-        height: auto;
-    }
+  .posts {
+    height: auto;
+  }
 }
