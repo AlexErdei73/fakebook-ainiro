@@ -50,7 +50,15 @@ const TitleBar = (props) => {
   // Dropdown logic
   const [show, setShow] = useState(false);
 
-  const handleDropdownClick = () => setShow(!show);
+  const handleDropdownClick = () => {
+    console.log(`show: ${show}`);
+    setShow(!show);
+  };
+
+  window.onclick = (e) => {
+    if (e.target.id === "dropdownMenuButton") handleDropdownClick();
+    else if (show) setShow(false);
+  };
 
   return (
     <div className='titlebar bg-light'>
@@ -126,7 +134,9 @@ const TitleBar = (props) => {
                 aria-haspopup='true'
                 aria-expanded='false'
                 aria-label='dropdown button'
-                onClick={handleDropdownClick}
+                onKeyUp={(e) => {
+                  if (e.key === "Escape") setShow(false);
+                }}
               ></button>
               <div
                 className={`dropdown-menu dropdown-menu-right ${
