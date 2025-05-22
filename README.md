@@ -1,7 +1,7 @@
 ## Fakebook-AINIRO
 
-This is a Facebook clone app, where the original version, which uses a Firebase
-backend, can be found [here](https://github.com/AlexErdei73/fakebook). This
+This is a social media demo app, where the original version, which uses a Firebase
+backend, can be found here[Fakebook](https://github.com/AlexErdei73/fakebook). This
 version is using [AINIRO Magic](https://docs.ainiro.io/), which is a low code,
 no code backend framework from
 [Thomas Hansen](https://www.linkedin.com/in/thomas-hansen-ainiro/). The
